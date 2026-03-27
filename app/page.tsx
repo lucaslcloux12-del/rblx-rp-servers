@@ -40,7 +40,7 @@ export default function Home() {
           <h1 className="text-6xl font-bold text-gray-900 mb-2">RBLX RP</h1>
           <p className="text-2xl text-blue-600 mb-12">Servers</p>
           <div className="bg-white rounded-3xl shadow-2xl p-10">
-            <h2 className="text-3xl font-semibold mb-8">Bem-vindo ao Sorocaba City</h2>
+            <h2 className="text-3xl font-semibold mb-8">Bem-vindo ao mais fácil e acessível site de rps</h2>
             <button
               onClick={handleGoogleLogin}
               className="w-full bg-white border-2 border-gray-200 hover:border-blue-500 flex items-center justify-center gap-4 py-6 rounded-3xl text-xl font-medium transition-all hover:shadow-xl"
