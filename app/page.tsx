@@ -114,7 +114,7 @@ export default function Home() {
 
           {/* Botões - 100% responsivo no celular */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <a href="https://www.roblox.com/pt/games/4924922222/Brookhaven-RP?privateServerLinkCode=77346599535120220343297605129322" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
+            <a href="https://www.roblox.com/share?code=75edbab073868b4595f7692b49bae680&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟢</span>
                 <div>
@@ -124,7 +124,7 @@ export default function Home() {
               </div>
             </a>
 
-            <a href="https://www.roblox.com/pt/games/4924922222/Brookhaven-RP?privateServerLinkCode=91112912204459794256670083567508" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-yellow-200 transition-all">
+            <a href="https://www.roblox.com/share?code=17adcf24b3cff94eae42ebfff10741e0&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-yellow-200 transition-all">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟡</span>
                 <div>
@@ -135,7 +135,7 @@ export default function Home() {
             </a>
 
             {/* NOVO BOTÃO SERVIDOR 3 */}
-            <a href="https://ALTERE-AQUI.com" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-red-200 transition-all sm:col-span-2 md:col-span-1">
+            <a href="https://www.roblox.com/share?code=53cb6dd1a69ee7479651883dd5676c4d&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-red-200 transition-all sm:col-span-2 md:col-span-1">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🔴</span>
                 <div>
