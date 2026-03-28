@@ -65,7 +65,7 @@ export default function Home() {
                 <img src="https://www.google.com/favicon.ico" alt="Google" className="w-8 h-8" />
                 Entrar com Google
               </button>
-              <p className="text-sm text-gray-500 mt-8">Estamos atualizando aos poucos ;) </p>
+              <p className="text-sm text-gray-500 mt-8">Estamos atualizando aos poucos ;) Feito por LucaslcGamer12 me siga no Roblox! </p>
             </div>
           </div>
         </div>
