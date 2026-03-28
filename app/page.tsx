@@ -57,7 +57,7 @@ export default function Home() {
             <h1 className="text-6xl font-bold text-gray-900 mb-2">RBLX RP</h1>
             <p className="text-2xl text-blue-600 mb-12">Servers</p>
             <div className="bg-white rounded-3xl shadow-2xl p-10">
-              <h2 className="text-3xl font-semibold mb-8">Bem-vindo ao Sorocaba City</h2>
+              <h2 className="text-3xl font-semibold mb-8">Bem-vindo ao mais fácil e acessível site de Rps</h2>
               <button
                 onClick={handleGoogleLogin}
                 className="w-full bg-white border-2 border-gray-200 hover:border-blue-500 flex items-center justify-center gap-4 py-6 rounded-3xl text-xl font-medium transition-all hover:shadow-xl"
@@ -65,7 +65,7 @@ export default function Home() {
                 <img src="https://www.google.com/favicon.ico" alt="Google" className="w-8 h-8" />
                 Entrar com Google
               </button>
-              <p className="text-sm text-gray-500 mt-8">O login fica salvo para sempre</p>
+              <p className="text-sm text-gray-500 mt-8">Estamos atualizando aos poucos ;) </p>
             </div>
           </div>
         </div>
@@ -86,7 +86,7 @@ export default function Home() {
             <div onClick={() => setView('detail')}
                  className="bg-gradient-to-br from-blue-500 to-cyan-400 text-white rounded-3xl p-16 text-center cursor-pointer hover:scale-105 transition-all shadow-2xl">
               <div className="text-7xl font-bold mb-4">Sorocaba City</div>
-              <div className="text-2xl opacity-90">Clique para entrar no servidor</div>
+              <div className="text-2xl opacity-90">Clique para selecionar o servidor</div>
             </div>
           </div>
         </div>
@@ -119,7 +119,7 @@ export default function Home() {
                 <span className="text-5xl">🟢</span>
                 <div>
                   <div className="text-2xl font-semibold">Servidor 1</div>
-                  <div className="text-green-600 flex items-center gap-1 text-sm">⨳ Online • Entrar agora</div>
+                  <div className="text-green-600 flex items-center gap-1 text-sm">⨳ Clique • Entrar agora</div>
                 </div>
               </div>
             </a>
@@ -129,7 +129,7 @@ export default function Home() {
                 <span className="text-5xl">🟡</span>
                 <div>
                   <div className="text-2xl font-semibold">Servidor 2</div>
-                  <div className="text-yellow-600 flex items-center gap-1 text-sm">⨳ Online • Entrar agora</div>
+                  <div className="text-yellow-600 flex items-center gap-1 text-sm">⨳ Clique • Entrar agora</div>
                 </div>
               </div>
             </a>
@@ -140,7 +140,7 @@ export default function Home() {
                 <span className="text-5xl">🔴</span>
                 <div>
                   <div className="text-2xl font-semibold">Servidor 3</div>
-                  <div className="text-red-600 flex items-center gap-1 text-sm">⨳ Online • Entrar agora</div>
+                  <div className="text-red-600 flex items-center gap-1 text-sm">⨳ Clique • Entrar agora</div>
                 </div>
               </div>
             </a>
