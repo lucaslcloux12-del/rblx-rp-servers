@@ -114,7 +114,7 @@ export default function Home() {
 
           {/* Botões - 100% responsivo no celular */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <a href="https://www.roblox.com/share?code=17adcf24b3cff94eae42ebfff10741e0&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
+            <a href="https://www.roblox.com/share?code=75edbab073868b4595f7692b49bae680&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟢</span>
                 <div>
@@ -124,7 +124,7 @@ export default function Home() {
               </div>
             </a>
 
-            <a href="https://www.roblox.com/share?code=75edbab073868b4595f7692b49bae680&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-yellow-200 transition-all">
+            <a href="https://www.roblox.com/share?code=17adcf24b3cff94eae42ebfff10741e0&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-yellow-200 transition-all">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟡</span>
                 <div>
