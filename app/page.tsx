@@ -9,7 +9,6 @@ export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [view, setView] = useState<'login' | 'menu' | 'detail'>('login');
   
-  // Estado dos servidores (agora com link + status)
   const [serverData, setServerData] = useState({
     link1: "https://www.roblox.com/share?code=75edbab073868b4595f7692b49bae680&type=Server",
     status1: true,
@@ -135,7 +134,6 @@ export default function Home() {
     );
   }
 
-  // TELA DETALHE
   return (
     <>
       <Bubbles />
@@ -161,10 +159,17 @@ export default function Home() {
             <p className="text-xl text-gray-600 mt-2">escolha, clique e aproveite o RP!</p>
           </div>
 
-          {/* Botões dos 4 servidores */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Servidor 1 */}
-            <a href={serverData.link1} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
+            <a 
+              href={serverData.status1 ? serverData.link1 : "#"} 
+              target={serverData.status1 ? "_blank" : undefined}
+              className={`block bg-white rounded-3xl p-8 shadow-xl border transition-all ${
+                serverData.status1 
+                  ? 'hover:shadow-2xl hover:-translate-y-1 border-green-200 cursor-pointer' 
+                  : 'pointer-events-none opacity-60 cursor-not-allowed border-gray-300'
+              }`}
+            >
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟢</span>
                 <div className="flex-1">
@@ -177,7 +182,15 @@ export default function Home() {
             </a>
 
             {/* Servidor 2 */}
-            <a href={serverData.link2} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-yellow-200 transition-all">
+            <a 
+              href={serverData.status2 ? serverData.link2 : "#"} 
+              target={serverData.status2 ? "_blank" : undefined}
+              className={`block bg-white rounded-3xl p-8 shadow-xl border transition-all ${
+                serverData.status2 
+                  ? 'hover:shadow-2xl hover:-translate-y-1 border-yellow-200 cursor-pointer' 
+                  : 'pointer-events-none opacity-60 cursor-not-allowed border-gray-300'
+              }`}
+            >
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟡</span>
                 <div className="flex-1">
@@ -190,7 +203,15 @@ export default function Home() {
             </a>
 
             {/* Servidor 3 */}
-            <a href={serverData.link3} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-red-200 transition-all">
+            <a 
+              href={serverData.status3 ? serverData.link3 : "#"} 
+              target={serverData.status3 ? "_blank" : undefined}
+              className={`block bg-white rounded-3xl p-8 shadow-xl border transition-all ${
+                serverData.status3 
+                  ? 'hover:shadow-2xl hover:-translate-y-1 border-red-200 cursor-pointer' 
+                  : 'pointer-events-none opacity-60 cursor-not-allowed border-gray-300'
+              }`}
+            >
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🔴</span>
                 <div className="flex-1">
@@ -202,8 +223,16 @@ export default function Home() {
               </div>
             </a>
 
-            {/* Servidor 4 NOVO */}
-            <a href={serverData.link4} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-purple-200 transition-all">
+            {/* Servidor 4 */}
+            <a 
+              href={serverData.status4 ? serverData.link4 : "#"} 
+              target={serverData.status4 ? "_blank" : undefined}
+              className={`block bg-white rounded-3xl p-8 shadow-xl border transition-all ${
+                serverData.status4 
+                  ? 'hover:shadow-2xl hover:-translate-y-1 border-purple-200 cursor-pointer' 
+                  : 'pointer-events-none opacity-60 cursor-not-allowed border-gray-300'
+              }`}
+            >
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟣</span>
                 <div className="flex-1">
@@ -218,14 +247,13 @@ export default function Home() {
         </div>
       </div>
 
-      {/* MODAL DE EDIÇÃO */}
+      {/* MODAL DE EDIÇÃO (permanece igual) */}
       {isEditing && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8">
             <h2 className="text-3xl font-bold mb-6 text-center">Editar Servidores</h2>
 
             <div className="space-y-8 max-h-[70vh] overflow-y-auto pr-2">
-              {/* Servidor 1 */}
               <div className="border border-gray-200 rounded-3xl p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xl">🟢 Servidor 1</span>
@@ -237,7 +265,6 @@ export default function Home() {
                 <input type="text" value={editData.link1} onChange={(e) => setEditData({...editData, link1: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm" placeholder="Link do Servidor 1" />
               </div>
 
-              {/* Servidor 2 */}
               <div className="border border-gray-200 rounded-3xl p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xl">🟡 Servidor 2</span>
@@ -249,7 +276,6 @@ export default function Home() {
                 <input type="text" value={editData.link2} onChange={(e) => setEditData({...editData, link2: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm" placeholder="Link do Servidor 2" />
               </div>
 
-              {/* Servidor 3 */}
               <div className="border border-gray-200 rounded-3xl p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xl">🔴 Servidor 3</span>
@@ -261,7 +287,6 @@ export default function Home() {
                 <input type="text" value={editData.link3} onChange={(e) => setEditData({...editData, link3: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm" placeholder="Link do Servidor 3" />
               </div>
 
-              {/* Servidor 4 */}
               <div className="border border-gray-200 rounded-3xl p-5">
                 <div className="flex items-center justify-between mb-3">
                   <span className="text-xl">🟣 Servidor 4</span>
