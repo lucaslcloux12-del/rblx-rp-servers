@@ -1,15 +1,24 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { auth, googleProvider } from '../lib/firebase';
+import { auth, googleProvider, db } from '../lib/firebase';
 import { signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
+import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
 export default function Home() {
   const [user, setUser] = useState<User | null>(null);
   const [view, setView] = useState<'login' | 'menu' | 'detail'>('login');
+  const [serverLinks, setServerLinks] = useState({
+    link1: "https://www.roblox.com/share?code=75edbab073868b4595f7692b49bae680&type=Server",
+    link2: "https://www.roblox.com/share?code=17adcf24b3cff94eae42ebfff10741e0&type=Server",
+    link3: "https://www.roblox.com/share?code=53cb6dd1a69ee7479651883dd5676c4d&type=Server"
+  });
+  const [isEditing, setIsEditing] = useState(false);
+  const [editLinks, setEditLinks] = useState(serverLinks);
 
+  // Listener em tempo real do Firestore
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+    const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
         setUser(currentUser);
         setView('menu');
@@ -18,7 +27,18 @@ export default function Home() {
         setView('login');
       }
     });
-    return () => unsubscribe();
+
+    // Listener dos links
+    const unsubscribeLinks = onSnapshot(doc(db, "settings", "servers"), (docSnap) => {
+      if (docSnap.exists()) {
+        setServerLinks(docSnap.data() as typeof serverLinks);
+      }
+    });
+
+    return () => {
+      unsubscribeAuth();
+      unsubscribeLinks();
+    };
   }, []);
 
   const handleGoogleLogin = async () => {
@@ -33,7 +53,17 @@ export default function Home() {
     await auth.signOut();
   };
 
-  // Bolinhas que se movem no fundo (usadas em todas as telas)
+  const openEditModal = () => {
+    setEditLinks({ ...serverLinks });
+    setIsEditing(true);
+  };
+
+  const saveLinks = async () => {
+    await setDoc(doc(db, "settings", "servers"), editLinks);
+    setServerLinks(editLinks);
+    setIsEditing(false);
+  };
+
   const Bubbles = () => (
     <div className="fixed inset-0 overflow-hidden pointer-events-none z-[-1]">
       <div className="bubble w-8 h-8 left-[10%] top-[20%] animation-delay-0"></div>
@@ -94,14 +124,28 @@ export default function Home() {
     );
   }
 
+  // TELA DETAIL
   return (
     <>
       <Bubbles />
       <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-white to-blue-50">
         <div className="max-w-2xl w-full px-4">
-          <button onClick={() => setView('menu')} className="mb-8 flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium">← Voltar ao menu</button>
-          
-          {/* Foto esférica SEM a bolinha brilhante */}
+          {/* Cabeçalho com botão Voltar + Lápis (só para o admin) */}
+          <div className="flex justify-between items-center mb-8">
+            <button onClick={() => setView('menu')} className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium">← Voltar ao menu</button>
+            
+            {user?.email === "lucaslcloux12@gmail.com" && (
+              <button
+                onClick={openEditModal}
+                className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+                title="Editar links dos servidores"
+              >
+                ✏️ <span className="text-sm font-medium">Editar links</span>
+              </button>
+            )}
+          </div>
+
+          {/* Foto */}
           <div className="relative w-80 h-80 mx-auto mb-10">
             <img src="/sorocaba-avatar.png" alt="Sorocaba RP" className="w-full h-full object-cover rounded-full border-8 border-white shadow-2xl" />
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 via-transparent to-transparent pointer-events-none"></div>
@@ -112,9 +156,9 @@ export default function Home() {
             <p className="text-xl text-gray-600 mt-2">escolha, clique e aproveite o RP!</p>
           </div>
 
-          {/* Botões - 100% responsivo no celular */}
+          {/* Botões */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            <a href="https://www.roblox.com/share?code=75edbab073868b4595f7692b49bae680&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
+            <a href={serverLinks.link1} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟢</span>
                 <div>
@@ -124,7 +168,7 @@ export default function Home() {
               </div>
             </a>
 
-            <a href="https://www.roblox.com/share?code=17adcf24b3cff94eae42ebfff10741e0&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-yellow-200 transition-all">
+            <a href={serverLinks.link2} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-yellow-200 transition-all">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🟡</span>
                 <div>
@@ -134,8 +178,7 @@ export default function Home() {
               </div>
             </a>
 
-            {/* NOVO BOTÃO SERVIDOR 3 */}
-            <a href="https://www.roblox.com/share?code=53cb6dd1a69ee7479651883dd5676c4d&type=Server" target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-red-200 transition-all sm:col-span-2 md:col-span-1">
+            <a href={serverLinks.link3} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-red-200 transition-all sm:col-span-2 md:col-span-1">
               <div className="flex items-center gap-4">
                 <span className="text-5xl">🔴</span>
                 <div>
@@ -147,6 +190,60 @@ export default function Home() {
           </div>
         </div>
       </div>
+
+      {/* MODAL DE EDIÇÃO (só aparece para o admin) */}
+      {isEditing && (
+        <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
+          <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8">
+            <h2 className="text-3xl font-bold mb-6 text-center">Editar Links dos Servidores</h2>
+            
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Servidor 1 (🟢)</label>
+                <input
+                  type="text"
+                  value={editLinks.link1}
+                  onChange={(e) => setEditLinks({ ...editLinks, link1: e.target.value })}
+                  className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Servidor 2 (🟡)</label>
+                <input
+                  type="text"
+                  value={editLinks.link2}
+                  onChange={(e) => setEditLinks({ ...editLinks, link2: e.target.value })}
+                  className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-600 mb-1">Servidor 3 (🔴)</label>
+                <input
+                  type="text"
+                  value={editLinks.link3}
+                  onChange={(e) => setEditLinks({ ...editLinks, link3: e.target.value })}
+                  className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm"
+                />
+              </div>
+            </div>
+
+            <div className="flex gap-4 mt-10">
+              <button
+                onClick={() => setIsEditing(false)}
+                className="flex-1 py-4 rounded-3xl border border-gray-300 font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={saveLinks}
+                className="flex-1 py-4 rounded-3xl bg-blue-600 text-white font-medium hover:bg-blue-700"
+              >
+                Salvar Alterações
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }
