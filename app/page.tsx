@@ -15,8 +15,8 @@ export default function Home() {
   });
   const [isEditing, setIsEditing] = useState(false);
   const [editLinks, setEditLinks] = useState(serverLinks);
+  const [isSaving, setIsSaving] = useState(false);
 
-  // Listener em tempo real do Firestore
   useEffect(() => {
     const unsubscribeAuth = onAuthStateChanged(auth, (currentUser) => {
       if (currentUser) {
@@ -28,7 +28,6 @@ export default function Home() {
       }
     });
 
-    // Listener dos links
     const unsubscribeLinks = onSnapshot(doc(db, "settings", "servers"), (docSnap) => {
       if (docSnap.exists()) {
         setServerLinks(docSnap.data() as typeof serverLinks);
@@ -59,9 +58,17 @@ export default function Home() {
   };
 
   const saveLinks = async () => {
-    await setDoc(doc(db, "settings", "servers"), editLinks);
-    setServerLinks(editLinks);
-    setIsEditing(false);
+    setIsSaving(true);
+    try {
+      await setDoc(doc(db, "settings", "servers"), editLinks);
+      setServerLinks(editLinks);
+      setIsEditing(false);
+    } catch (error) {
+      console.error("Erro ao salvar:", error);
+      alert("Erro ao salvar. Verifique se você está logado com lucaslcloux12@gmail.com");
+    } finally {
+      setIsSaving(false);
+    }
   };
 
   const Bubbles = () => (
@@ -124,13 +131,11 @@ export default function Home() {
     );
   }
 
-  // TELA DETAIL
   return (
     <>
       <Bubbles />
       <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-white to-blue-50">
         <div className="max-w-2xl w-full px-4">
-          {/* Cabeçalho com botão Voltar + Lápis (só para o admin) */}
           <div className="flex justify-between items-center mb-8">
             <button onClick={() => setView('menu')} className="flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium">← Voltar ao menu</button>
             
@@ -145,7 +150,6 @@ export default function Home() {
             )}
           </div>
 
-          {/* Foto */}
           <div className="relative w-80 h-80 mx-auto mb-10">
             <img src="/sorocaba-avatar.png" alt="Sorocaba RP" className="w-full h-full object-cover rounded-full border-8 border-white shadow-2xl" />
             <div className="absolute inset-0 rounded-full bg-gradient-to-br from-white/40 via-transparent to-transparent pointer-events-none"></div>
@@ -156,7 +160,6 @@ export default function Home() {
             <p className="text-xl text-gray-600 mt-2">escolha, clique e aproveite o RP!</p>
           </div>
 
-          {/* Botões */}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <a href={serverLinks.link1} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
               <div className="flex items-center gap-4">
@@ -191,7 +194,6 @@ export default function Home() {
         </div>
       </div>
 
-      {/* MODAL DE EDIÇÃO (só aparece para o admin) */}
       {isEditing && (
         <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 px-4">
           <div className="bg-white rounded-3xl shadow-2xl max-w-lg w-full p-8">
@@ -200,45 +202,26 @@ export default function Home() {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">Servidor 1 (🟢)</label>
-                <input
-                  type="text"
-                  value={editLinks.link1}
-                  onChange={(e) => setEditLinks({ ...editLinks, link1: e.target.value })}
-                  className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm"
-                />
+                <input type="text" value={editLinks.link1} onChange={(e) => setEditLinks({...editLinks, link1: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">Servidor 2 (🟡)</label>
-                <input
-                  type="text"
-                  value={editLinks.link2}
-                  onChange={(e) => setEditLinks({ ...editLinks, link2: e.target.value })}
-                  className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm"
-                />
+                <input type="text" value={editLinks.link2} onChange={(e) => setEditLinks({...editLinks, link2: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm" />
               </div>
               <div>
                 <label className="block text-sm font-medium text-gray-600 mb-1">Servidor 3 (🔴)</label>
-                <input
-                  type="text"
-                  value={editLinks.link3}
-                  onChange={(e) => setEditLinks({ ...editLinks, link3: e.target.value })}
-                  className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm"
-                />
+                <input type="text" value={editLinks.link3} onChange={(e) => setEditLinks({...editLinks, link3: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3 text-sm" />
               </div>
             </div>
 
             <div className="flex gap-4 mt-10">
-              <button
-                onClick={() => setIsEditing(false)}
-                className="flex-1 py-4 rounded-3xl border border-gray-300 font-medium"
-              >
-                Cancelar
-              </button>
-              <button
+              <button onClick={() => setIsEditing(false)} className="flex-1 py-4 rounded-3xl border border-gray-300 font-medium">Cancelar</button>
+              <button 
                 onClick={saveLinks}
-                className="flex-1 py-4 rounded-3xl bg-blue-600 text-white font-medium hover:bg-blue-700"
+                disabled={isSaving}
+                className="flex-1 py-4 rounded-3xl bg-blue-600 text-white font-medium hover:bg-blue-700 disabled:bg-gray-400"
               >
-                Salvar Alterações
+                {isSaving ? "Salvando..." : "Salvar Alterações"}
               </button>
             </div>
           </div>
