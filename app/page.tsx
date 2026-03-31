@@ -5,7 +5,10 @@ import { auth, googleProvider, db } from '../lib/firebase';
 import { signInWithPopup, onAuthStateChanged, User } from 'firebase/auth';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 
-type Server = { link: string; status: boolean };
+type Server = {
+  link: string;
+  status: boolean;
+};
 
 type City = {
   id: string;
@@ -23,7 +26,7 @@ export default function Home() {
   const [cities, setCities] = useState<City[]>([]);
   const [selectedCity, setSelectedCity] = useState<City | null>(null);
 
-  // Modais
+  // Estados do modal de gerenciar cidades
   const [isManagingCities, setIsManagingCities] = useState(false);
   const [cityBeingEdited, setCityBeingEdited] = useState<City | null>(null);
   const [isSaving, setIsSaving] = useState(false);
@@ -39,11 +42,12 @@ export default function Home() {
       }
     });
 
+    // Carrega as cidades do Firestore
     const unsubscribeCities = onSnapshot(doc(db, "settings", "cities"), (docSnap) => {
-      if (docSnap.exists() && docSnap.data().cities?.length > 0) {
+      if (docSnap.exists() && docSnap.data().cities && docSnap.data().cities.length > 0) {
         setCities(docSnap.data().cities);
       } else {
-        // Cria Sorocaba City na primeira vez
+        // Cria Sorocaba City automaticamente se não existir
         const initialCity: City = {
           id: "sorocaba-city",
           name: "Sorocaba City",
@@ -98,8 +102,8 @@ export default function Home() {
       await setDoc(doc(db, "settings", "cities"), { cities: newCities });
       setCities(newCities);
     } catch (error) {
-      console.error(error);
-      alert("Erro ao salvar. Verifique se está logado com lucaslcloux12@gmail.com");
+      console.error("Erro ao salvar:", error);
+      alert("Erro ao salvar. Verifique se você está logado com lucaslcloux12@gmail.com");
     } finally {
       setIsSaving(false);
     }
@@ -130,14 +134,18 @@ export default function Home() {
   };
 
   const toggleCityActive = (id: string) => {
-    const updated = cities.map(c => c.id === id ? { ...c, active: !c.active } : c);
-    saveAllCities(updated);
+    const updatedCities = cities.map(c => 
+      c.id === id ? { ...c, active: !c.active } : c
+    );
+    saveAllCities(updatedCities);
   };
 
   const saveEditedCity = () => {
     if (!cityBeingEdited) return;
-    const updated = cities.map(c => c.id === cityBeingEdited.id ? cityBeingEdited : c);
-    saveAllCities(updated);
+    const updatedCities = cities.map(c => 
+      c.id === cityBeingEdited.id ? cityBeingEdited : c
+    );
+    saveAllCities(updatedCities);
     setCityBeingEdited(null);
   };
 
@@ -155,7 +163,7 @@ export default function Home() {
     </div>
   );
 
-  // LOGIN
+  // TELA DE LOGIN
   if (view === 'login') {
     return (
       <>
@@ -166,7 +174,10 @@ export default function Home() {
             <p className="text-2xl text-blue-600 mb-12">Servers</p>
             <div className="bg-white rounded-3xl shadow-2xl p-10">
               <h2 className="text-3xl font-semibold mb-8">Bem-vindo ao mais fácil e acessível site de Rps</h2>
-              <button onClick={handleGoogleLogin} className="w-full bg-white border-2 border-gray-200 hover:border-blue-500 flex items-center justify-center gap-4 py-6 rounded-3xl text-xl font-medium transition-all hover:shadow-xl">
+              <button
+                onClick={handleGoogleLogin}
+                className="w-full bg-white border-2 border-gray-200 hover:border-blue-500 flex items-center justify-center gap-4 py-6 rounded-3xl text-xl font-medium transition-all hover:shadow-xl"
+              >
                 <img src="https://www.google.com/favicon.ico" alt="Google" className="w-8 h-8" />
                 Entrar com Google
               </button>
@@ -178,7 +189,7 @@ export default function Home() {
     );
   }
 
-  // MENU - GRADE DE CIDADES
+  // TELA MENU - GRADE DE CIDADES
   if (view === 'menu') {
     return (
       <>
@@ -187,9 +198,12 @@ export default function Home() {
           <div className="max-w-6xl mx-auto">
             <div className="flex justify-between items-center mb-12">
               <h1 className="text-4xl font-bold">RBLX RP Servers</h1>
-              <div className="flex gap-4">
+              <div className="flex items-center gap-4">
                 {user?.email === "lucaslcloux12@gmail.com" && (
-                  <button onClick={openManageCities} className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-3xl font-medium hover:bg-blue-700">
+                  <button
+                    onClick={openManageCities}
+                    className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-3xl font-medium hover:bg-blue-700"
+                  >
                     ✏️ Gerenciar Cidades
                   </button>
                 )}
@@ -202,7 +216,9 @@ export default function Home() {
                 <div
                   key={city.id}
                   onClick={() => openCityDetail(city)}
-                  className={`bg-white rounded-3xl overflow-hidden shadow-xl transition-all ${city.active ? 'cursor-pointer hover:scale-105' : 'opacity-60 cursor-not-allowed'}`}
+                  className={`bg-white rounded-3xl overflow-hidden shadow-xl transition-all ${
+                    city.active ? 'cursor-pointer hover:scale-105' : 'opacity-60 cursor-not-allowed'
+                  }`}
                 >
                   <img src={city.imageUrl} alt={city.name} className="w-full h-52 object-cover" />
                   <div className="p-6">
@@ -216,7 +232,7 @@ export default function Home() {
           </div>
         </div>
 
-        {/* MODAL GERENCIAR CIDADES - OVERLAY */}
+        {/* MODAL GERENCIAR CIDADES */}
         {isManagingCities && (
           <div className="fixed inset-0 bg-black/70 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-3xl w-full max-w-5xl max-h-[92vh] flex flex-col">
@@ -226,6 +242,7 @@ export default function Home() {
               </div>
               <div className="p-8 overflow-auto flex-1">
                 <button onClick={addNewCity} className="w-full py-4 bg-green-600 text-white rounded-3xl mb-8 font-medium">+ Adicionar Nova Cidade</button>
+
                 {cities.map((city) => (
                   <div key={city.id} className="mb-8 border border-gray-200 rounded-3xl p-6">
                     <div className="flex flex-col md:flex-row gap-6">
@@ -234,7 +251,12 @@ export default function Home() {
                         <div className="flex justify-between items-start">
                           <h3 className="text-2xl font-bold">{city.name}</h3>
                           <div className="flex gap-3">
-                            <button onClick={() => toggleCityActive(city.id)} className={`px-6 py-1 rounded-full text-sm ${city.active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}>{city.active ? 'Ativo' : 'Desativado'}</button>
+                            <button
+                              onClick={() => toggleCityActive(city.id)}
+                              className={`px-6 py-1 rounded-full text-sm ${city.active ? 'bg-green-100 text-green-700' : 'bg-gray-200 text-gray-600'}`}
+                            >
+                              {city.active ? 'Ativo' : 'Desativado'}
+                            </button>
                             <button onClick={() => deleteCity(city.id)} className="text-red-600">Remover</button>
                             <button onClick={() => setCityBeingEdited(city)} className="text-blue-600">Editar</button>
                           </div>
@@ -252,14 +274,22 @@ export default function Home() {
     );
   }
 
-  // DETAIL DA CIDADE
+  // TELA DETAIL DA CIDADE
   if (view === 'detail' && selectedCity) {
     return (
       <>
         <Bubbles />
         <div className="min-h-screen flex items-center justify-center p-6 bg-gradient-to-br from-white to-blue-50">
           <div className="max-w-2xl w-full px-4">
-            <button onClick={() => { setView('menu'); setSelectedCity(null); }} className="mb-8 flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium">← Voltar às cidades</button>
+            <button
+              onClick={() => {
+                setView('menu');
+                setSelectedCity(null);
+              }}
+              className="mb-8 flex items-center gap-2 text-blue-600 hover:text-blue-800 font-medium"
+            >
+              ← Voltar às cidades
+            </button>
 
             <div className="relative w-80 h-80 mx-auto mb-10">
               <img src={selectedCity.imageUrl} alt={selectedCity.name} className="w-full h-full object-cover rounded-full border-8 border-white shadow-2xl" />
@@ -274,7 +304,12 @@ export default function Home() {
               {selectedCity.servers.map((server, i) => {
                 const emojis = ['🟢', '🟡', '🔴', '🟣'];
                 return server.status ? (
-                  <a key={i} href={server.link} target="_blank" className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all">
+                  <a
+                    key={i}
+                    href={server.link}
+                    target="_blank"
+                    className="block bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl hover:-translate-y-1 border border-green-200 transition-all"
+                  >
                     <div className="flex items-center gap-4">
                       <span className="text-5xl">{emojis[i]}</span>
                       <div className="flex-1">
@@ -284,7 +319,10 @@ export default function Home() {
                     </div>
                   </a>
                 ) : (
-                  <div key={i} className="block bg-white rounded-3xl p-8 shadow-xl border border-gray-300 opacity-60 cursor-not-allowed">
+                  <div
+                    key={i}
+                    className="block bg-white rounded-3xl p-8 shadow-xl border border-gray-300 opacity-60 cursor-not-allowed"
+                  >
                     <div className="flex items-center gap-4">
                       <span className="text-5xl">{emojis[i]}</span>
                       <div className="flex-1">
@@ -314,33 +352,57 @@ export default function Home() {
             <div className="space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">Nome da Cidade</label>
-                <input type="text" value={cityBeingEdited.name} onChange={e => setCityBeingEdited({...cityBeingEdited, name: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3" />
+                <input
+                  type="text"
+                  value={cityBeingEdited.name}
+                  onChange={(e) => setCityBeingEdited({ ...cityBeingEdited, name: e.target.value })}
+                  className="w-full border border-gray-300 rounded-2xl px-4 py-3"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Descrição</label>
-                <textarea value={cityBeingEdited.description} onChange={e => setCityBeingEdited({...cityBeingEdited, description: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3 h-28" />
+                <textarea
+                  value={cityBeingEdited.description}
+                  onChange={(e) => setCityBeingEdited({ ...cityBeingEdited, description: e.target.value })}
+                  className="w-full border border-gray-300 rounded-2xl px-4 py-3 h-28"
+                />
               </div>
               <div>
                 <label className="block text-sm font-medium mb-2">Link da Imagem</label>
-                <input type="text" value={cityBeingEdited.imageUrl} onChange={e => setCityBeingEdited({...cityBeingEdited, imageUrl: e.target.value})} className="w-full border border-gray-300 rounded-2xl px-4 py-3" />
+                <input
+                  type="text"
+                  value={cityBeingEdited.imageUrl}
+                  onChange={(e) => setCityBeingEdited({ ...cityBeingEdited, imageUrl: e.target.value })}
+                  className="w-full border border-gray-300 rounded-2xl px-4 py-3"
+                />
               </div>
 
               <div>
                 <label className="block text-sm font-medium mb-4">Servidores da cidade (4 slots)</label>
                 {cityBeingEdited.servers.map((server, i) => (
                   <div key={i} className="flex gap-4 items-center mb-6">
-                    <span className="text-4xl w-10">{['🟢','🟡','🔴','🟣'][i]}</span>
-                    <input type="text" value={server.link} onChange={e => {
-                      const newServers = [...cityBeingEdited.servers];
-                      newServers[i].link = e.target.value;
-                      setCityBeingEdited({...cityBeingEdited, servers: newServers});
-                    }} className="flex-1 border border-gray-300 rounded-2xl px-4 py-3 text-sm" placeholder="Link do servidor" />
-                    <label className="flex items-center gap-2 cursor-pointer">
-                      <input type="checkbox" checked={server.status} onChange={e => {
+                    <span className="text-4xl w-10">{['🟢', '🟡', '🔴', '🟣'][i]}</span>
+                    <input
+                      type="text"
+                      value={server.link}
+                      onChange={(e) => {
                         const newServers = [...cityBeingEdited.servers];
-                        newServers[i].status = e.target.checked;
-                        setCityBeingEdited({...cityBeingEdited, servers: newServers});
-                      }} />
+                        newServers[i].link = e.target.value;
+                        setCityBeingEdited({ ...cityBeingEdited, servers: newServers });
+                      }}
+                      className="flex-1 border border-gray-300 rounded-2xl px-4 py-3 text-sm"
+                      placeholder="Link do servidor"
+                    />
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={server.status}
+                        onChange={(e) => {
+                          const newServers = [...cityBeingEdited.servers];
+                          newServers[i].status = e.target.checked;
+                          setCityBeingEdited({ ...cityBeingEdited, servers: newServers });
+                        }}
+                      />
                       <span className="text-sm font-medium">Online</span>
                     </label>
                   </div>
@@ -349,8 +411,19 @@ export default function Home() {
             </div>
 
             <div className="flex gap-4 mt-10">
-              <button onClick={() => setCityBeingEdited(null)} className="flex-1 py-4 border border-gray-300 rounded-3xl font-medium">Cancelar</button>
-              <button onClick={saveEditedCity} disabled={isSaving} className="flex-1 py-4 bg-blue-600 text-white rounded-3xl font-medium">{isSaving ? "Salvando..." : "Salvar Alterações"}</button>
+              <button
+                onClick={() => setCityBeingEdited(null)}
+                className="flex-1 py-4 border border-gray-300 rounded-3xl font-medium"
+              >
+                Cancelar
+              </button>
+              <button
+                onClick={saveEditedCity}
+                disabled={isSaving}
+                className="flex-1 py-4 bg-blue-600 text-white rounded-3xl font-medium"
+              >
+                {isSaving ? "Salvando..." : "Salvar Alterações"}
+              </button>
             </div>
           </div>
         </div>
